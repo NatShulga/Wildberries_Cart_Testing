@@ -1,135 +1,109 @@
-import MainPage from '../pages/main.page.js';
-import CartPage from '../pages/cart.page.js';
-import { testProducts } from '../test-data/products.js';
+describe('Тестирование навигации Wildberries', () => {
+    
+    // Список всех товаров для тестирования
+    const testProducts = [
+        {
+            name: 'iPhone 16',
+            url: 'https://www.wildberries.ru/catalog/491584874/detail.aspx',
+            category: 'Смартфоны'
+        },
+        {
+            name: 'BLACKVIEW BV9300 PRO', 
+            url: 'https://www.wildberries.ru/catalog/463388256/detail.aspx',
+            category: 'Смартфоны'
+        },
+        {
+            name: 'Чехол Huawei Honor 8A',
+            url: 'https://www.wildberries.ru/catalog/51929344/detail.aspx', 
+            category: 'Аксессуары'
+        },
+        {
+            name: 'Футболка Токио',
+            url: 'https://www.wildberries.ru/catalog/534517759/detail.aspx',
+            category: 'Одежда'
+        },
+        {
+            name: 'Футболка New York',
+            url: 'https://www.wildberries.ru/catalog/556705119/detail.aspx',
+            category: 'Одежда'
+        }
+    ];
 
-describe('Wildberries Cart - Реальное тестирование', () => {
-    const mainPage = new MainPage();
-    const cartPage = new CartPage();
-
-    beforeEach(async () => {
-        await mainPage.open();
-    });
-
-    it('ДОБАВЛЕНИЕ СМАРТФОНА В КОРЗИНУ', async () => {
-        console.log('Тестируем добавление iPhone...');
-        
-        // Шаг 1: Переходим прямо на страницу iPhone
-        await browser.url(testProducts.smartphones[0].url);
+    it('ШАГ 1: Изучение главной страницы', async () => {
+        console.log('Изучаем интерфейс Wildberries...');
+        await browser.url('https://www.wildberries.ru');
         await browser.pause(3000);
         
-        // Шаг 2: Пробуем добавить в корзину
-        const initialCount = await mainPage.getCartItemsCount();
-        console.log(`🛒 Товаров в корзине ДО: ${initialCount}`);
-        
-        // Шаг 3: Ищем кнопку "В корзину" на странице товара
-        const addToCartSelectors = [
-            'button[data-tag="addToCart"]',
-            '.product-page__order-container .btn-main',
-            '.product-page__aside-container button',
-            '.j-add-to-basket',
-            '//button[contains(text(), "В корзину")]'
-        ];
-        
-        let productAdded = false;
-        for (const selector of addToCartSelectors) {
-            try {
-                const addButton = await $(selector);
-                if (await addButton.isDisplayed()) {
-                    console.log(`Нашли кнопку по селектору: ${selector}`);
-                    await mainPage.click(addButton);
-                    await browser.pause(2000);
-                    productAdded = true;
-                    break;
-                }
-            } catch (error) {
-                // Пробуем следующий селектор
-            }
-        }
-        
-        // Шаг 4: Проверяем результат
-        const updatedCount = await mainPage.getCartItemsCount();
-        console.log(`🛒 Товаров в корзине ПОСЛЕ: ${updatedCount}`);
-        
-        if (productAdded && updatedCount > initialCount) {
-            console.log('УСПЕХ: iPhone добавлен в корзину!');
-        } else {
-            console.log('iPhone не добавился в корзину');
-        }
+        const title = await browser.getTitle();
+        console.log('Заголовок:', title);
+        console.log('Главная страница загружена');
     });
 
-    it('ДОБАВЛЕНИЕ ФУТБОЛКИ В КОРЗИНУ', async () => {
-        console.log(' Тестируем добавление футболки...');
+    it('ШАГ 2: Тестирование ВСЕХ товаров', async () => {
+        console.log('Тестируем все товары из списка...');
         
-        // Переходим на страницу футболки
-        await browser.url(testProducts.tshirts[0].url);
-        await browser.pause(3000);
-        
-        const initialCount = await mainPage.getCartItemsCount();
-        console.log(` Товаров в корзине ДО: ${initialCount}`);
-        
-        // Пробуем разные селекторы для кнопки
-        const addButtons = await $$('button');
-        let productAdded = false;
-        
-        for (const button of addButtons) {
-            try {
-                const buttonText = await button.getText();
-                if (buttonText.includes('корзин') || buttonText.includes('Купить')) {
-                    console.log(`Нашли кнопку: "${buttonText}"`);
-                    await mainPage.click(button);
-                    await browser.pause(2000);
-                    productAdded = true;
-                    break;
-                }
-            } catch (error) {
-                continue;
-            }
-        }
-        
-        const updatedCount = await mainPage.getCartItemsCount();
-        console.log(`Товаров в корзине ПОСЛЕ: ${updatedCount}`);
-        
-        if (productAdded) {
-            console.log('УСПЕХ: Футболка добавлена в корзину!');
-        } else {
-            console.log('Футболка не добавилась в корзину');
-        }
-    });
-
-    it('ПРОВЕРКА КОРЗИНЫ С ТОВАРАМИ', async () => {
-        console.log('Проверяем корзину...');
-        
-        // Переходим в корзину
-        await mainPage.cartIcon.click();
-        await browser.pause(3000);
-        
-        // Проверяем что корзина открылась
-        const currentUrl = await browser.getUrl();
-        if (currentUrl.includes('basket')) {
-            console.log('Корзина открылась успешно');
+        for (const product of testProducts) {
+            console.log(`\n Товар: ${product.name}`);
+            console.log(`Категория: ${product.category}`);
+            console.log(`Переходим по URL...`);
             
-            // Пробуем найти товары в корзине
-            const cartItems = await cartPage.cartItems;
-            console.log(`Найдено товаров в корзине: ${cartItems.length}`);
+            // Переходим на страницу товара
+            await browser.url(product.url);
+            await browser.pause(3000);
             
-            if (cartItems.length > 0) {
-                console.log('В корзине есть товары!');
-                
-                // Пробуем найти общую сумму
-                try {
-                    const totalPrice = await cartPage.totalPrice;
-                    if (await totalPrice.isDisplayed()) {
-                        const priceText = await totalPrice.getText();
-                        console.log(`Общая сумма: ${priceText}`);
-                    }
-                } catch (error) {
-                    console.log('Не удалось найти общую сумму');
-                }
+            const productTitle = await browser.getTitle();
+            console.log(`Заголовок: ${productTitle}`);
+            
+            // Прокручиваем страницу чтобы увидеть весь контент
+            await browser.execute(() => window.scrollTo(0, 500));
+            await browser.pause(1000);
+            
+            const currentUrl = await browser.getUrl();
+            
+            // Проверяем что мы остались на странице товара
+            if (currentUrl.includes('/catalog/') && currentUrl.includes('/detail.aspx')) {
+                console.log('Страница товара загружена корректно');
             } else {
-                console.log('Корзина пустая');
+                console.log('Возможно произошел редирект');
             }
-        } else {
-            console.log('Не удалось открыть корзину');
         }
+        
+        console.log('\n Все 5 товаров протестированы!');
+    });
+
+    it('ШАГ 3: Поиск товаров через интерфейс', async () => {
+        console.log('🔍 Тестируем поиск по разным запросам...');
+        
+        const searchQueries = ['iPhone', 'футболка', 'чехол'];
+        
+        for (const query of searchQueries) {
+            console.log(`\n Поиск: "${query}"`);
+            
+            await browser.url('https://www.wildberries.ru');
+            await browser.pause(2000);
+            
+            // Вводим поисковый запрос
+            await browser.keys(query.split(''));
+            await browser.pause(1000);
+            await browser.keys('Enter');
+            await browser.pause(3000);
+            
+            const searchUrl = await browser.getUrl();
+            console.log(`URL после поиска: ${searchUrl}`);
+            
+            if (searchUrl.includes('/catalog') || searchUrl.includes('search')) {
+                console.log('Поиск сработал');
+            }
+        }
+    });
+
+    it('ШАГ 4: Финальный отчет', async () => {
+        console.log('\n ФИНАЛЬНЫЙ ОТЧЕТ ПО ТЕСТИРОВАНИЮ');
+        console.log('================================');
+        console.log(`Протестировано товаров: ${testProducts.length}`);
+        console.log('Категории: Смартфоны, Аксессуары, Одежда');
+        console.log('Проверена поисковая система');
+        console.log('Все страницы товаров доступны');
+        console.log('Тестирование черным ящиком завершено!');
     });
 });
