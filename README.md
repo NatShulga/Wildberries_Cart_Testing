@@ -37,15 +37,23 @@
 npx wdio run wdio.conf.js --spec tests/iphone.test.js
 
 ~  Конкретное устройство:
+
+
 npx wdio run wdio.conf.js --capabilities 0  # Десктоп
+
+
 npx wdio run wdio.conf.js --capabilities 1  # Планшет
+
+
 npx wdio run wdio.conf.js --capabilities 2  # Мобильный
 
 ~ Запуск  тестирования скорости загрузки страницы:
 
 npx wdio run wdio.conf.js --spec tests/specs/speed.test.js
 
-~ Проверка доступности для людей с ограниченными возможностями
+~ Проверка доступности для людей с ограниченными возможностями:
+
+
 npx wdio run wdio.conf.js --spec tests/specs/accessibility.test.js
 
 **Что проверяет:**
