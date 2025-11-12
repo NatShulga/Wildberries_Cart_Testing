@@ -1,9 +1,15 @@
 {"name":"wildberries-automation",
 "version":"1.0.0",
 
-"scripts":{"test":"wdio run wdio.conf.js",
-"test:cart":"wdio run wdio.conf.js --spec tests/specs/cart.test.js",
-"test:simple":"wdio run wdio.conf.js --spec tests/specs/simple.test.js"},
+"scripts":{
+    "test":"wdio run wdio.conf.js",
+    "test:desktop": "wdio run wdio.conf.js --capabilities 0",
+    "test:tablet": "wdio run wdio.conf.js --capabilities 1", 
+    "test:mobile": "wdio run wdio.conf.js --capabilities 2",
+    "test:iphone": "wdio run wdio.conf.js --spec tests/iphone.test.js",
+    "test:adaptability": "wdio run wdio.conf.js --spec tests/adaptability.test.js",
+    "test:cart":"wdio run wdio.conf.js --spec tests/specs/cart.test.js",
+    "test:simple":"wdio run wdio.conf.js --spec tests/specs/simple.test.js"},
 
 "devDependencies":{
     "@wdio/cli":"^8.46.0",

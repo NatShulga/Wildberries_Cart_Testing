@@ -1,4 +1,4 @@
-# Test Run: Smoke Testing Cart - написать дату тестирования
+# Test Run: Smoke Testing Cart
 
 ## Конфигурация:
 
